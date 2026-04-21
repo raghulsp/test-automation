@@ -1,0 +1,10 @@
+{
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "cucumber.features": [
+        "src/test/resources/features/**/*.feature"
+    ],
+    "cucumber.glue": [
+        "src/test/java/com/framework/steps/**/*.java",
+        "src/test/java/com/framework/hooks/**/*.java"
+    ]
+}
