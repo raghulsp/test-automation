@@ -23,6 +23,15 @@ mvn clean test -Dcucumber.filter.tags="not @wip"
 
 # Skip WIP tests (default behaviour via TestRunner)
 mvn clean test
+
+# Run API tests only (no browser required)
+mvn clean test -Dcucumber.filter.tags="@api"
+
+# Run integration tests (API setup + UI verification)
+mvn clean test -Dplatform=web -Dcucumber.filter.tags="@integration"
+
+# Run UI tests only (exclude API-only scenarios)
+mvn clean test -Dplatform=web -Dcucumber.filter.tags="not @api and not @wip"
 ```
 
 Reports are written to `target/cucumber-reports/report.html` after each run.
@@ -37,9 +46,34 @@ Reports are written to `target/cucumber-reports/report.html` after each run.
 testng.xml
   └── TestRunner (@CucumberOptions)
         └── Hooks (@Before / @After)
-              ├── @Before → DriverFactory.createDriver() → DriverManager.setDriver()
-              └── @After  → screenshot on fail → DriverManager.quitDriver()
-        └── Step definitions → Page objects via LoginPageFactory
+              ├── @Before → if NOT @api: DriverFactory.createDriver() → DriverManager.setDriver()
+              └── @After  → if NOT @api: screenshot on fail → DriverManager.quitDriver()
+                          → always: ScenarioContext.clear()
+        └── Step definitions
+              ├── LoginSteps  → Page objects via LoginPageFactory  (UI scenarios)
+              ├── ApiSteps    → ApiClient → UserService / AuthService  (@api scenarios)
+              └── Both        → ScenarioContext (shared data bridge for @integration scenarios)
+```
+
+### API + integration flow
+
+```
+@api scenario                          @integration scenario
+─────────────────────────────────      ──────────────────────────────────────────
+Hooks.@Before (no driver created)      Hooks.@Before → DriverFactory.createDriver()
+  │                                      │
+ApiSteps → ApiClient                   ApiSteps.createUserViaApi()
+  └─ UserService / AuthService           └─ UserService.createAndReturnCredentials()
+       │                                      └─ ScenarioContext.set("credentials", ...)
+       └─ ScenarioContext.set(                │
+            "lastResponse", response)   LoginSteps.loginWithApiCreatedCredentials()
+  │                                      └─ ScenarioContext.get("credentials", ...)
+ApiSteps assertion steps                     └─ loginPage.enterUsername / enterPassword
+  └─ ScenarioContext.get("lastResponse") │
+                                        UI assertions
+Hooks.@After (no driver to quit)        │
+  └─ ScenarioContext.clear()           Hooks.@After → DriverManager.quitDriver()
+                                          └─ ScenarioContext.clear()
 ```
 
 ### Platform switching
@@ -74,5 +108,14 @@ testng.xml
 | `base.url` | herokuapp login | URL opened in web scenarios |
 | `appium.url` | `http://127.0.0.1:4723` | Appium server for mobile |
 | `implicit.wait` | `10` | Seconds for implicit waits |
+| `api.base.url` | `https://reqres.in` | Base URL for REST API calls |
 
 All properties can be overridden at runtime with `-D` flags without editing the file.
+
+### Adding a new API service
+
+1. Add a service class in `src/main/java/com/framework/api/services/` extending or composing `ApiClient`.
+2. Return raw `Response` objects from each method for assertions in step definitions.
+3. For setup helpers (e.g. `createAndReturnX()`), assert the status inline and return a model object.
+4. Add step definitions in `ApiSteps` (or a new `*Steps` class if the domain warrants it).
+5. Create feature files under `src/test/resources/features/api/` and tag them `@api`.

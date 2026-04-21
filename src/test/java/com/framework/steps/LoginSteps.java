@@ -1,6 +1,8 @@
 package com.framework.steps;
 
 import com.framework.config.ConfigManager;
+import com.framework.context.ScenarioContext;
+import com.framework.models.UserCredentials;
 import com.framework.pages.ILoginPage;
 import com.framework.pages.LoginPageFactory;
 
@@ -28,6 +30,18 @@ public class LoginSteps {
     @And("the user clicks on the login button")
     public void clickLoginButton() {
         loginPage.clickLogin();
+    }
+
+    /**
+     * Integration step: reads credentials placed in {@link ScenarioContext} by an API setup step
+     * and enters them into the login form.  Used in {@code @integration} scenarios where a user
+     * is created via the API first and the resulting credentials are then exercised through the UI.
+     */
+    @When("the user logs in with the API-created credentials")
+    public void loginWithApiCreatedCredentials() {
+        UserCredentials credentials = ScenarioContext.get("credentials", UserCredentials.class);
+        loginPage.enterUsername(credentials.getUsername());
+        loginPage.enterPassword(credentials.getPassword());
     }
 
     @Then("the user should be able to see the {string}")
