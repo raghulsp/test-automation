@@ -38,10 +38,10 @@ public class LoginPage extends BasePage implements ILoginPage {
         // Override only if testing a mobile browser (hybrid app)
     }
 
-    @Override
-    public void enterUsername(String username) {
-        type(usernameField(), username);
-    }
+    // @Override
+    // public void enterUsername(String username) {
+    //     type(usernameField(), username);
+    // }
 
     @Override
     public void enterPassword(String password) {
@@ -53,13 +53,31 @@ public class LoginPage extends BasePage implements ILoginPage {
         click(loginButton());
     }
 
-    @Override
-    public String getErrorMessage() {
-        return getText(errorMessage());
-    }
+    // @Override
+    // public String getErrorMessage() {
+    //     return getText(errorMessage());
+    // }
 
     @Override
     public String getCurrentUrl() {
         return platform().equals("android") ? "" : "";
+    }
+
+    @Override
+    public void enterEmail(String username) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'enterEmail'");
+    }
+
+    @Override
+    public void clickContinue() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'clickContinue'");
+    }
+
+    @Override
+    public String getVisibleMessage() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getVisibleMessage'");
     }
 }

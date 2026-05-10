@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm i *)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\Repos\\\\selenium-from-scratch\" -Recurse -Force | Select-Object FullName, @{Name=\"Type\";Expression={if\\($_.PSIsContainer\\){\"DIR\"}else{\"FILE\"}}} | Sort-Object FullName | ConvertTo-Csv -NoTypeInformation | Out-String)",
+      "Bash(mvn compile *)"
+    ]
+  }
+}

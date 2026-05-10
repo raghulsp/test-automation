@@ -13,7 +13,10 @@ public class ConfigManager{
             .getClassLoader()
         .getResourceAsStream("config.properties")){
             if(is != null) properties.load(is);
-         } catch(IOException e){
+        }
+
+             
+        catch(IOException e){
                 throw new RuntimeException("Failed to load config.properties", e);
             }
     }

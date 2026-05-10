@@ -7,22 +7,20 @@ import io.cucumber.testng.CucumberOptions;
 
 @CucumberOptions(
     features = "src/test/resources/features",
-    glue = {"com.framework.hooks","com.framework.steps"},
+    glue = {"com.framework.hooks", "com.framework.steps"},
     plugin = {
         "pretty",
-        "html:target/cucumber-reports/report.html",
-        "json:target/cucumber-reports/report.json"
+        "html:target/cucumber-reports/regression-report.html",
+        "json:target/cucumber-reports/regression-report.json"
     },
-    tags = "not @wip",
+    tags = "@regression",
     monochrome = true
 )
+public class RegressionTestRunner extends AbstractTestNGCucumberTests {
 
-public class TestRunner extends AbstractTestNGCucumberTests{
-    
     @Override
-    @DataProvider(parallel = true)
-    public Object [][] scenarios(){
+    @DataProvider(parallel = false)
+    public Object[][] scenarios() {
         return super.scenarios();
     }
-
 }

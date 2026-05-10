@@ -25,6 +25,7 @@
         <logback.version>1.4.14</logback.version>
         <extentreports.version>5.1.1</extentreports.version>
         <jackson.version>2.17.0</jackson.version>
+        <restassured.version>5.4.0</restassured.version>
     </properties>
 
     <dependencies>
@@ -99,6 +100,13 @@
             <version>${logback.version}</version>
         </dependency>
 
+        <!-- ANSI color support for Logback on Windows -->
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>2.4.1</version>
+        </dependency>
+
         <!-- ExtentReports for HTML reporting -->
         <dependency>
             <groupId>com.aventstack</groupId>
@@ -111,6 +119,20 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+
+        <!-- REST Assured — API testing -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${restassured.version}</version>
+        </dependency>
+
+        <!-- JSON Schema Validator (bundled with REST Assured) -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>${restassured.version}</version>
         </dependency>
 
     </dependencies>
@@ -158,7 +180,10 @@
                             <projectName>selenium-from-scratch</projectName>
                             <outputDirectory>${project.build.directory}/masterthought-reports</outputDirectory>
                             <jsonFiles>
-                                <param>${project.build.directory}/cucumber-reports/report.json</param>
+                                <param>${project.build.directory}/cucumber-reports/smoke-report.json</param>
+                                <param>${project.build.directory}/cucumber-reports/regression-report.json</param>
+                                <param>${project.build.directory}/cucumber-reports/api-smoke-report.json</param>
+                                <param>${project.build.directory}/cucumber-reports/api-regression-report.json</param>
                             </jsonFiles>
                             <checkBuildResult>false</checkBuildResult>
                         </configuration>

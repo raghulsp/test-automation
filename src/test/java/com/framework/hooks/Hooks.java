@@ -13,9 +13,10 @@ import com.framework.drivers.DriverManager;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
+import org.testng.SkipException;
 
 public class Hooks {
-    
+
     private static final Logger log = LoggerFactory.getLogger(Hooks.class);
 
     @Before
@@ -41,6 +42,10 @@ public class Hooks {
         DeviceManager.releaseDevice();
     }
 
-
-
+    @Before(value = "@mobile-only", order = 999)
+    public void skipIfWeb() {
+        if (DeviceManager.currentDevice().getPlatform().equals("web")) {
+            throw new SkipException("Skipped: scenario is mobile-only");
+        }
+    }
 }

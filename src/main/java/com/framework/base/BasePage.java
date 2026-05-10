@@ -2,11 +2,23 @@ package com.framework.base;
 
 import com.framework.drivers.DeviceManager;
 import com.framework.drivers.DriverManager;
+import com.framework.utils.AndroidKeyUtils;
+import com.framework.utils.GestureUtils;
+import com.framework.utils.KeyboardUtils;
+import com.framework.utils.NotificationUtils;
+import com.framework.utils.SwipeUtils;
+import com.framework.utils.TapUtils;
 import com.framework.utils.WaitUtils;
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.nativekey.AndroidKey;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.time.Duration;
+
 public class BasePage {
+
+    private static final int MAX_SWIPES = 15;
 
     protected WebElement find(By locator) {
         return WaitUtils.waitForVisible(locator);
@@ -35,5 +47,150 @@ public class BasePage {
 
     protected String platform() {
         return DeviceManager.currentDevice().getPlatform();
+    }
+
+    protected boolean isDisplayed(By locator){
+        return find(locator).isDisplayed();
+    }
+
+    protected boolean isDisplayedSafely(By locator, int timeoutSeconds) {
+        try {
+            return WaitUtils.waitForVisible(locator, timeoutSeconds).isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    protected void swipeUp() {
+        SwipeUtils.swipeUp();
+    }
+
+    protected void swipeDown() {
+        SwipeUtils.swipeDown();
+    }
+
+    protected void swipeToBottom() {
+        AppiumDriver driver = (AppiumDriver) DriverManager.getDriver();
+        String prevSource = null;
+        for (int i = 0; i < MAX_SWIPES; i++) {
+            String currentSource = driver.getPageSource();
+            if (currentSource.equals(prevSource)) break;
+            prevSource = currentSource;
+            SwipeUtils.swipeUp();
+        }
+    }
+
+    // --- Keyboard helpers ----------------------------------------------------
+
+    protected void hideKeyboard() {
+        KeyboardUtils.hideKeyboard();
+    }
+
+    protected void hideKeyboard(String dismissKey) {
+        KeyboardUtils.hideKeyboard(dismissKey);
+    }
+
+    protected boolean isKeyboardShown() {
+        return KeyboardUtils.isKeyboardShown();
+    }
+
+    // --- Android hardware keys ----------------------------------------------
+
+    protected void pressBack()       { AndroidKeyUtils.back(); }
+    protected void pressHome()       { AndroidKeyUtils.home(); }
+    protected void pressAppSwitch()  { AndroidKeyUtils.appSwitch(); }
+    protected void pressEnter()      { AndroidKeyUtils.enter(); }
+    protected void pressSearch()     { AndroidKeyUtils.search(); }
+    protected void pressEscape()     { AndroidKeyUtils.escape(); }
+    protected void pressKey(AndroidKey key)     { AndroidKeyUtils.press(key); }
+    protected void longPressKey(AndroidKey key) { AndroidKeyUtils.longPress(key); }
+
+    // --- Gesture helpers -----------------------------------------------------
+
+    protected void longPress(WebElement element) {
+        GestureUtils.longPress(element);
+    }
+
+    protected void longPress(WebElement element, Duration duration) {
+        GestureUtils.longPress(element, duration);
+    }
+
+    protected void doubleTap(WebElement element) {
+        GestureUtils.doubleTap(element);
+    }
+
+    protected void pinchOpen(WebElement element) {
+        GestureUtils.pinchOpen(element);
+    }
+
+    protected void pinchClose(WebElement element) {
+        GestureUtils.pinchClose(element);
+    }
+
+    protected void dragAndDrop(WebElement source, WebElement target) {
+        GestureUtils.dragAndDrop(source, target);
+    }
+
+    protected void tapAt(int x, int y) {
+        GestureUtils.tapAt(x, y);
+    }
+
+    // --- Tap helpers ---------------------------------------------------------
+
+    protected void tapByXpath(String xpath) {
+        TapUtils.tapByXpath(xpath);
+    }
+
+    protected void tapById(String resourceId) {
+        TapUtils.tapById(resourceId);
+    }
+
+    protected void tapByAccessibilityId(String id) {
+        TapUtils.tapByAccessibilityId(id);
+    }
+
+    protected void tapByAndroidUiText(String text) {
+        TapUtils.tapByAndroidUiText(text);
+    }
+
+    protected void tapByAndroidUiTextContains(String text) {
+        TapUtils.tapByAndroidUiTextContains(text);
+    }
+
+    protected void tapByAndroidUiResourceId(String resourceId) {
+        TapUtils.tapByAndroidUiResourceId(resourceId);
+    }
+
+    protected void tapByIosPredicateString(String predicate) {
+        TapUtils.tapByIosPredicateString(predicate);
+    }
+
+    protected void tapByIosClassChain(String chain) {
+        TapUtils.tapByIosClassChain(chain);
+    }
+
+    // --- Notification helpers ------------------------------------------------
+
+    protected void openNotificationTray() {
+        NotificationUtils.openNotificationTray();
+    }
+
+    protected void tapNotificationByText(String text) {
+        NotificationUtils.tapNotificationByText(text);
+    }
+
+    protected void tapNotificationByTextContains(String text) {
+        NotificationUtils.tapNotificationByTextContains(text);
+    }
+
+    protected void swipeToTop() {
+        AppiumDriver driver = (AppiumDriver) DriverManager.getDriver();
+        String prevSource = null;
+        for (int i = 0; i < MAX_SWIPES; i++) {
+            String currentSource = driver.getPageSource();
+            if (currentSource.equals(prevSource)) break;
+            prevSource = currentSource;
+            SwipeUtils.swipeDown();
+        }
     }
 }

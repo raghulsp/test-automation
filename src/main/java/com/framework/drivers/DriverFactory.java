@@ -15,14 +15,20 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.framework.config.ConfigManager;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class DriverFactory {
 
+    private static final Logger log = LoggerFactory.getLogger(DriverFactory.class);
+
     public static WebDriver createDriver() {
         Device device = DeviceManager.acquireDevice();
+        log.info("Creating {} driver for device: {}", device.getPlatform(), device.getUdid());
 
         return switch (device.getPlatform()) {
             case "android" -> createAndroidDriver(device);
@@ -50,7 +56,7 @@ public class DriverFactory {
         };
 
         driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(ConfigManager.getInt("implicit.wait", 10)));
+        // driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(ConfigManager.getInt("implicit.wait", 10)));
         return driver;
     }
 
@@ -59,12 +65,17 @@ public class DriverFactory {
         UiAutomator2Options options = new UiAutomator2Options();
         options.setUdid(device.getUdid());
         options.setPlatformVersion(device.getPlatformVersion());
-        options.setAppPackage(ConfigManager.get("app.package"));
-        options.setAppActivity(ConfigManager.get("app.activity"));
+        String appPackage = device.getAppPackage() != null ? device.getAppPackage() : ConfigManager.get("app.package");
+        options.setAppPackage(appPackage);
         options.setNoReset(ConfigManager.getBoolean("no.reset", true));
+        // autoLaunch=false avoids "am start-activity -n package/activity" which fails
+        // for non-exported activities (e.g. Amazon). activateApp() uses monkey instead.
+        options.setCapability("appium:autoLaunch", false);
 
         try {
-            return new AndroidDriver(URI.create(device.getAppiumUrl()).toURL(), options);
+            AndroidDriver driver = new AndroidDriver(URI.create(device.getAppiumUrl()).toURL(), options);
+            driver.activateApp(appPackage);
+            return driver;
         } catch (MalformedURLException e) {
             throw new RuntimeException("Invalid Appium URL for device: " + device, e);
         }

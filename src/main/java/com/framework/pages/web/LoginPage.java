@@ -6,19 +6,26 @@ import org.openqa.selenium.By;
 
 public class LoginPage extends BasePage implements ILoginPage {
 
-    private final By usernameField = By.id("username");
-    private final By passwordField = By.id("password");
-    private final By loginButton   = By.id("login");
-    private final By errorMessage  = By.cssSelector(".flash.error");
+    private final By emailField = By.id("ap_email_login");
+    private final By continueButton = By.id("continue-announce");
+    private final By passwordField = By.id("ap_password");
+    private final By loginButton   = By.id("signInSubmit");
+    private final By helloGreeting = By.xpath("//span[contains(@class,'nav-line-1') and contains(text(),'Hello')]");
+    private final By errorMessage  = By.cssSelector(".a-alert-content");
 
     @Override
     public void open(String url) {
-        open(url);
+        super.open(url);
     }
 
     @Override
-    public void enterUsername(String username) {
-        type(usernameField, username);
+    public void enterEmail(String username) {
+        type(emailField, username);
+    }
+
+    @Override
+    public void clickContinue(){
+        click(continueButton);
     }
 
     @Override
@@ -32,7 +39,8 @@ public class LoginPage extends BasePage implements ILoginPage {
     }
 
     @Override
-    public String getErrorMessage() {
+    public String getVisibleMessage() {
+        if (isDisplayedSafely(helloGreeting, 8)) return getText(helloGreeting);
         return getText(errorMessage);
     }
 
