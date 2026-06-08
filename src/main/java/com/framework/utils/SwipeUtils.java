@@ -8,6 +8,8 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Rectangle;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
@@ -76,6 +78,42 @@ public class SwipeUtils {
         WaitUtils.waitForVisible(locator, 2);
     }
 
+    // -------------------------------------------------------------------------
+    // Seek bar (surfer bar) drag — drag thumb from its current position to a
+    // target percentage of the bar width. Reads current progress via "value"
+    // and "max" attributes (UiAutomator2 / XCUITest expose these for SeekBar /
+    // UISlider). Falls back to the left edge when attributes are unavailable.
+    // -------------------------------------------------------------------------
+
+    public static void swipeSurferBarToMiddle(By seekBarLocator) {
+        swipeSurferBarToPercent(seekBarLocator, 0.5);
+    }
+
+    public static void swipeSurferBarToPercent(By seekBarLocator, double targetPercent) {
+        requireMobile();
+        WebElement seekBar = WaitUtils.waitForVisible(seekBarLocator);
+        Rectangle rect = seekBar.getRect();
+        int barY   = rect.getY() + rect.getHeight() / 2;
+        int barLeft  = rect.getX();
+        int barWidth = rect.getWidth();
+
+        double currentPercent = readSeekBarProgress(seekBar);
+        int startX = barLeft + (int) (barWidth * currentPercent);
+        int endX   = barLeft + (int) (barWidth * targetPercent);
+        performSwipe(startX, barY, endX, barY);
+    }
+
+    private static double readSeekBarProgress(WebElement seekBar) {
+        try {
+            String value    = seekBar.getAttribute("value");
+            String maxValue = seekBar.getAttribute("max");
+            if (value != null && !value.isEmpty() && maxValue != null && !maxValue.isEmpty()) {
+                return Double.parseDouble(value) / Double.parseDouble(maxValue);
+            }
+        } catch (NumberFormatException ignored) {}
+        return 0.0;
+    }
+
     private static void performSwipe(int startX, int startY, int endX, int endY) {
         AppiumDriver driver = (AppiumDriver) DriverManager.getDriver();
         PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
@@ -127,6 +165,8 @@ public class SwipeUtils {
         String selector = buildUiScrollable(direction) +
                 ".scrollIntoView(new UiSelector().resourceId(\"" + resourceId + "\"))";
         ((AndroidDriver) DriverManager.getDriver()).findElement(AppiumBy.androidUIAutomator(selector));
+
+        AppiumBy.androidUIAutomator("new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().resourceId(resourceId))");
     }
 
     // -------------------------------------------------------------------------

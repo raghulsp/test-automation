@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<!--
+  Pure TestNG login suite — no Cucumber involved.
+
+  Run all tests:       mvn clean test -Plogin-testng
+  Run smoke only:      mvn clean test -Plogin-testng -Dgroups=smoke
+  Run regression only: mvn clean test -Plogin-testng -Dgroups=regression
+-->
+<suite name="Pure TestNG Login Suite" verbose="1" parallel="tests" thread-count="${thread.count}" data-provider-thread-count="${data.provider.thread.count}">
+
+    <test name="Login Tests">
+        <classes>
+            <class name="com.framework.testng.LoginTest"/>
+        </classes>
+    </test>
+
+</suite>

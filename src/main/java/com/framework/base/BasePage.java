@@ -3,6 +3,7 @@ package com.framework.base;
 import com.framework.drivers.DeviceManager;
 import com.framework.drivers.DriverManager;
 import com.framework.utils.AndroidKeyUtils;
+import com.framework.utils.DPadUtils;
 import com.framework.utils.GestureUtils;
 import com.framework.utils.KeyboardUtils;
 import com.framework.utils.NotificationUtils;
@@ -94,6 +95,21 @@ public class BasePage {
         return KeyboardUtils.isKeyboardShown();
     }
 
+    // --- D-pad / Android TV remote ------------------------------------------
+
+    protected void dpadUp()                        { DPadUtils.up(); }
+    protected void dpadDown()                      { DPadUtils.down(); }
+    protected void dpadLeft()                      { DPadUtils.left(); }
+    protected void dpadRight()                     { DPadUtils.right(); }
+    protected void dpadSelect()                    { DPadUtils.select(); }
+    protected void navigateDownTo(By locator)      { DPadUtils.navigateDownTo(locator); }
+    protected void navigateUpTo(By locator)        { DPadUtils.navigateUpTo(locator); }
+    protected void navigateRightTo(By locator)     { DPadUtils.navigateRightTo(locator); }
+    protected void navigateLeftTo(By locator)      { DPadUtils.navigateLeftTo(locator); }
+    protected void typeInFocused(String text)      { DPadUtils.typeInFocused(text); }
+    protected boolean isFocused(By locator)        { return DPadUtils.isFocused(locator); }
+    protected WebElement getFocusedElement()       { return DPadUtils.getFocusedElement(); }
+
     // --- Android hardware keys ----------------------------------------------
 
     protected void pressBack()       { AndroidKeyUtils.back(); }
@@ -133,6 +149,18 @@ public class BasePage {
 
     protected void tapAt(int x, int y) {
         GestureUtils.tapAt(x, y);
+    }
+
+    protected void tapScreenCenter() {
+        GestureUtils.tapScreenCenter();
+    }
+
+    protected void swipeSurferBarToMiddle(By seekBarLocator) {
+        SwipeUtils.swipeSurferBarToMiddle(seekBarLocator);
+    }
+
+    protected void swipeSurferBarToPercent(By seekBarLocator, double percent) {
+        SwipeUtils.swipeSurferBarToPercent(seekBarLocator, percent);
     }
 
     // --- Tap helpers ---------------------------------------------------------

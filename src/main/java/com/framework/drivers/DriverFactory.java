@@ -31,9 +31,10 @@ public class DriverFactory {
         log.info("Creating {} driver for device: {}", device.getPlatform(), device.getUdid());
 
         return switch (device.getPlatform()) {
-            case "android" -> createAndroidDriver(device);
-            case "ios"     -> createIOSDriver(device);
-            default        -> createWebDriver(device);
+            case "android"   -> createAndroidDriver(device);
+            case "androidtv" -> createAndroidTVDriver(device);
+            case "ios"       -> createIOSDriver(device);
+            default          -> createWebDriver(device);
         };
     }
 
@@ -78,6 +79,25 @@ public class DriverFactory {
             return driver;
         } catch (MalformedURLException e) {
             throw new RuntimeException("Invalid Appium URL for device: " + device, e);
+        }
+    }
+
+    private static WebDriver createAndroidTVDriver(Device device) {
+        UiAutomator2Options options = new UiAutomator2Options();
+        options.setUdid(device.getUdid());
+        options.setPlatformVersion(device.getPlatformVersion());
+        String appPackage = device.getAppPackage() != null ? device.getAppPackage() : ConfigManager.get("app.package");
+        options.setAppPackage(appPackage);
+        options.setNoReset(ConfigManager.getBoolean("no.reset", true));
+        // Same non-exported activity workaround as Android phone — autoLaunch=false + activateApp()
+        options.setCapability("appium:autoLaunch", false);
+
+        try {
+            AndroidDriver driver = new AndroidDriver(URI.create(device.getAppiumUrl()).toURL(), options);
+            driver.activateApp(appPackage);
+            return driver;
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Invalid Appium URL for Android TV device: " + device, e);
         }
     }
 

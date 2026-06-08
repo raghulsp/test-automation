@@ -2,6 +2,7 @@ package com.framework.utils;
 
 import com.framework.drivers.DeviceManager;
 import com.framework.drivers.DriverManager;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebElement;
@@ -134,8 +135,14 @@ public class GestureUtils {
     }
 
     // -------------------------------------------------------------------------
-    // Tap at coordinates (no element required) — useful to dismiss overlays
+    // Tap at coordinates (no element required) — useful to reveal controls
     // -------------------------------------------------------------------------
+
+    public static void tapScreenCenter() {
+        requireMobile();
+        Dimension size = DriverManager.getDriver().manage().window().getSize();
+        tapAt(size.width / 2, size.height / 2);
+    }
 
     public static void tapAt(int x, int y) {
         requireMobile();

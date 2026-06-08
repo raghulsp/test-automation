@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="Automation Suite" verbose="1" parallel="tests" thread-count="1" data-provider-thread-count="1">
+<suite name="Automation Suite" verbose="1" parallel="tests" thread-count="${thread.count}" data-provider-thread-count="${data.provider.thread.count}">
 
     <!-- UI Tests (Selenium / Appium) -->
-    <!-- <test name="UI Smoke Tests">
+    <test name="UI Smoke Tests">
         <classes>
             <class name="com.framework.runners.SmokeTestRunner"/>
         </classes>
-    </test> -->
+    </test>
     <test name="UI Regression Tests">
         <classes>
             <class name="com.framework.runners.RegressionTestRunner"/>
@@ -15,7 +15,7 @@
     </test>
 
     <!-- API Tests (REST Assured) -->
-    <!-- <test name="API Smoke Tests">
+    <test name="API Smoke Tests">
         <classes>
             <class name="com.framework.api.runners.ApiSmokeRunner"/>
         </classes>
@@ -24,6 +24,6 @@
         <classes>
             <class name="com.framework.api.runners.ApiRegressionRunner"/>
         </classes>
-    </test> -->
+    </test>
 
 </suite>

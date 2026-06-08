@@ -1,5 +1,6 @@
 package com.framework.api.core;
 
+import com.framework.api.auth.TokenManager;
 import com.framework.api.config.ApiConfig;
 import com.framework.api.utils.ApiRequestSpecBuilder;
 import io.restassured.response.Response;
@@ -18,14 +19,28 @@ public abstract class BaseApiService {
     }
 
     private RequestSpecification buildBaseSpec() {
+        return commonSpecBuilder().build();
+    }
+
+    /**
+     * Returns a spec identical to baseSpec but with the shared bearer token attached.
+     * Token is generated once per JVM by TokenManager (lock-free after the first call).
+     * Use this for endpoints that require authentication.
+     */
+    protected RequestSpecification authSpec() {
+        return commonSpecBuilder()
+            .withBearerToken(TokenManager.getToken())
+            .build();
+    }
+
+    private ApiRequestSpecBuilder commonSpecBuilder() {
         return new ApiRequestSpecBuilder()
             .withBaseUri(serviceName)
             .withRelaxedHttps()
             .withTimeout(
                 ApiConfig.getInt("api.connection.timeout", 10000),
                 ApiConfig.getInt("api.socket.timeout", 30000)
-            )
-            .build();
+            );
     }
 
     protected Response doGet(String path) {

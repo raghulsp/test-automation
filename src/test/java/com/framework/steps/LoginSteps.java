@@ -4,11 +4,8 @@ import com.framework.config.ConfigManager;
 import com.framework.pages.ILoginPage;
 import com.framework.pages.LoginPageFactory;
 import com.framework.utils.NotificationUtils;
-import com.framework.utils.SwipeUtils;
 import com.framework.utils.TapUtils;
-import com.framework.utils.SwipeUtils.Direction;
 
-import io.appium.java_client.AppiumBy;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -17,35 +14,42 @@ import org.testng.Assert;
 
 public class LoginSteps {
 
-    private final ILoginPage loginPage = LoginPageFactory.get();
+    private ILoginPage loginPage;
+
+    private ILoginPage loginPage() {
+        if (loginPage == null) {
+            loginPage = LoginPageFactory.get();
+        }
+        return loginPage;
+    }
 
     @Given("the user is on the login page")
     public void userIsOnLoginPage() {
-        loginPage.open(ConfigManager.get("base.url", ""));
+        loginPage().open(ConfigManager.get("base.url", ""));
     }
 
     @When("the user enters {string} and {string}")
     public void enterUserCredentials(String username, String password) {
-        loginPage.enterEmail(username);
-        loginPage.clickContinue();
-        loginPage.enterPassword(password);
+        loginPage().enterEmail(username);
+        loginPage().clickContinue();
+        loginPage().enterPassword(password);
     }
 
     @And("the user clicks on the login button")
     public void clickLoginButton() {
-        loginPage.clickLogin();
+        loginPage().clickLogin();
     }
 
     @Then("the user should be logged in")
     public void verifyUserIsLoggedIn() {
-        String message = loginPage.getVisibleMessage();
+        String message = loginPage().getVisibleMessage();
         Assert.assertFalse(message == null || message.isBlank(),
                 "Expected a post-login message but the page returned nothing");
     }
 
     @Then("the user should be able to see the {string}")
     public void verifyMessage(String expectedMessage) {
-        String actual = loginPage.getVisibleMessage();
+        String actual = loginPage().getVisibleMessage();
         Assert.assertTrue(actual.contains(expectedMessage),
                 "Expected to see '" + expectedMessage + "' but got: '" + actual + "'");
     }

@@ -19,7 +19,7 @@ public class Hooks {
 
     private static final Logger log = LoggerFactory.getLogger(Hooks.class);
 
-    @Before
+    @Before(order = 0)
     public void setUp(Scenario scenario){
         log.info("Starting scenario: {}", scenario.getName());
         DriverManager.setDriver(DriverFactory.createDriver());
@@ -42,9 +42,10 @@ public class Hooks {
         DeviceManager.releaseDevice();
     }
 
-    @Before(value = "@mobile-only", order = 999)
+    @Before(value = "@mobile-only", order = 1)
     public void skipIfWeb() {
-        if (DeviceManager.currentDevice().getPlatform().equals("web")) {
+        if (DeviceManager.currentDevice() != null
+                && DeviceManager.currentDevice().getPlatform().equals("web")) {
             throw new SkipException("Skipped: scenario is mobile-only");
         }
     }

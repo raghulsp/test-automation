@@ -39,8 +39,9 @@ public class AndroidKeyUtils {
     }
 
     private static void requireAndroid() {
-        if (!"android".equals(DeviceManager.currentDevice().getPlatform())) {
-            throw new UnsupportedOperationException("Hardware key presses are Android-only");
+        String platform = DeviceManager.currentDevice().getPlatform();
+        if (!"android".equals(platform) && !"androidtv".equals(platform)) {
+            throw new UnsupportedOperationException("Hardware key presses are Android/AndroidTV-only");
         }
     }
 }

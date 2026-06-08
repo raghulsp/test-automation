@@ -4,5 +4,12 @@
     "platform": "android",
     "platformVersion": "16",
     "appiumUrl": "http://127.0.0.1:4723"
+  },
+  {
+    "udid": "tv-emulator-5556",
+    "platform": "androidtv",
+    "platformVersion": "12",
+    "appiumUrl": "http://127.0.0.1:4724",
+    "appPackage": "com.example.tvapp"
   }
 ]

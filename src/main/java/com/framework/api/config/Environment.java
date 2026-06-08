@@ -1,7 +1,7 @@
 package com.framework.api.config;
 
 public enum Environment {
-    DEV, QA, STAGING, PROD;
+    DEV, QA, STAGING, PROD, MOCK;
 
     public static Environment fromString(String value) {
         for (Environment env : values()) {

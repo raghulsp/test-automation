@@ -9,6 +9,7 @@ public class LoginPageFactory {
         String platform = DeviceManager.currentDevice().getPlatform();
         return switch (platform) {
             case "android", "ios" -> new LoginPage();
+            case "androidtv"      -> new com.framework.pages.tv.LoginPage();
             default               -> new com.framework.pages.web.LoginPage();
         };
     }
